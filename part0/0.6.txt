@@ -1,0 +1,10 @@
+note over browser:
+spa updates when user inputs data
+end note
+
+note over browser:
+browser sends data in json format to server
+end note
+
+browser->server: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note
+server->browser: 201 Created succesfully

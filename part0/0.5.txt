@@ -1,0 +1,29 @@
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/spa
+
+note over server:
+server returns css and redirects to spa
+end note
+
+server-->browser: main.css
+
+note over server:
+server returns spa and redirects to data
+end note
+
+
+server-->browser: spa.js
+
+note over browser
+spa starts to render html for client
+end note
+
+
+note over server:
+server returns data.json to spa
+end note
+
+server-->browser: data.json
+
+note over browser:
+spa updates based on the received data
+end note
