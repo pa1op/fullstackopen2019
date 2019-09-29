@@ -7,23 +7,43 @@ const Button = (props) => (
     </button>
 )
 
-const StatisticRow = (props) => {
+const StatisticRow = ({name, value}) => {
     return (
         <tr>
-            <td>{props.name}</td>
-            <td>{props.value}</td>
+            <td>{name}</td>
+            <td>{value}</td>
         </tr>
     )
 }
 
-const Statistics = (props) => {
+const Statistics = ({good, neutral, bad}) => {
+
+    const average = (good, neutral, bad) => {
+        if ((good + neutral + bad) === 0) {
+            return 0;
+        } else {
+            return ((good * 1 + bad* (-1))/(good + neutral + bad));
+        }
+    }
+
+    const positive = (good, all) => {
+        if (good == 0){
+            return 0;
+        } else {
+            return (good/all);
+
+        }    
+    }
+
     return (
         <div>
             <h1>statistics</h1>
-            <StatisticRow name="good" value={props.good} />
-            <StatisticRow name="neutral" value={props.neutral} />
-            <StatisticRow name="bad" value={props.bad} />
-
+            <StatisticRow name="good" value={good} />
+            <StatisticRow name="neutral" value={neutral} />
+            <StatisticRow name="bad" value={bad} />
+            <StatisticRow name="all" value={good + neutral + bad} />
+            <StatisticRow name="average" value={average(good, neutral, bad)}/>
+            <StatisticRow name="positive" value={positive(good, (good + neutral + bad))}/>
         </div>
     )
 }
