@@ -39,20 +39,22 @@ const App = () => {
   const [ search, setSearch ] = useState('')
 
   const handleNameChange = (event) => {
-    setNewName(event.target.value) }
+    setNewName(event.target.value) 
+  }
 
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value)
   }
 
   const handleSearchChange = (event) => {
-    setNewSearch(event.target.value)
+    setSearch(event.target.value)
   }
 
   const nameExists = () => {
     const oldNamesList = persons.map((person)=> person.name)
     return oldNamesList.includes(newName)
   }
+
   useEffect(() => {
     console.log('effect')
     axios
@@ -64,11 +66,15 @@ const App = () => {
   }, [])
 
   const addEntry = (event) => {
-     event.preventDefault()
-     nameExists() ? alert(`${newName} is already added to phonebook`) : setPersons(persons.concat({name: newName, number: newNumber}))
-     setNewName('')
-     setNewNumber('')
-     setNewSearch('')
+    event.preventDefault()
+    nameExists() ? alert(`${newName} is already added to phonebook`) : setPersons(persons.concat({name: newName, number: newNumber}))
+    axios
+      .post('http://localhost:3001/persons', {name: newName, number: newNumber})
+      .then(response => {
+    })
+    setNewName('')
+    setNewNumber('')
+    setSearch('')
   }
 
   const matchingPersons = persons.filter(person => person.name.toUpperCase().includes(search.toUpperCase()))
