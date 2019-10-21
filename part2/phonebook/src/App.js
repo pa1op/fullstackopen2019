@@ -71,11 +71,26 @@ const App = () => {
       })
   }, [])
 
+  const updateEntry = (updatedPerson) => {
+    console.log("update")
+    console.log("update")
+    if (window.confirm(`${updatedPerson.name} is already added to the phonebook, replace old number with a new one?`)) {
+      let updateEntry = persons.filter(person => person.name === updatedPerson.name)[0]
+      updatedPerson.id = updateEntry.id
+      service.update(updatedPerson)
+      console.log(updatedPerson)
+    }
+  }
+
+  const createEntry = (person) => {
+    setPersons(persons.concat(person))
+    service.create(person)
+  }
+
   const addEntry = (event) => {
     const person = {name: newName, number: newNumber}
     event.preventDefault()
-    nameExists() ? alert(`${newName} is already added to phonebook`) : setPersons(persons.concat(person))
-    service.create(person)
+    nameExists() ? updateEntry(person) : createEntry(person)
     setNewName('')
     setNewNumber('')
     setSearch('')
