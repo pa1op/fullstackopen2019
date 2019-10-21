@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react'
 import service from './service'
 
 const Person = (props) => {
-  return <p>{props.name} {props.number}</p>
+  return <p>{props.person.name} {props.person.number}<button onClick={() => { props.handleDelete(props.person) }} >delete</button></p>
 }
 
 const Persons = (props) => {
   return (
-    props.personsToList.map((person) => <Person key={person.name} name={person.name} number={person.number}/>)
+    props.personsToList.map((person) => <Person key={person.name} person={person} handleDelete={props.handleDelete}/>)
   )
 }
 
@@ -50,6 +50,15 @@ const App = () => {
     setSearch(event.target.value)
   }
 
+  const handleDelete = (selectedPerson) => {
+    if (window.confirm("Delete " + selectedPerson.name + "?")) {
+      service.remove(selectedPerson)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== selectedPerson.id))
+      })
+    }
+  }
+
   const nameExists = () => {
     const oldNamesList = persons.map((person)=> person.name)
     return oldNamesList.includes(newName)
@@ -84,7 +93,7 @@ const App = () => {
         <PersonForm newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       </form>
       <h2>Numbers</h2>
-      <Persons personsToList={personsToList}/>
+      <Persons personsToList={personsToList} handleDelete={handleDelete}/>
     </div>
   )
 }
