@@ -2,7 +2,26 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios'
 
-const Language = props => {
+const Weather = (props) => {
+  const [weather, setWeather] = useState('')
+  useEffect(() => {
+    axios
+      .get(`http://api.weatherstack.com/current?access_key=bf1f9c123128a32392da6bd4fa880238&query=${props.capital}`)
+      .then(response => {
+        setWeather(response.data.current)
+      })
+  }, [])
+  return (
+    <>
+      <h2>Weather in {props.capital}</h2>
+      <p><b>temperature: </b>{weather.temperature} celsius</p>
+      <img src={weather.weather_icons} height="50" width="50" alt="not found"></img>
+      <p><b>wind: </b>{weather.wind_speed} kph direction {weather.wind_dir}</p>
+    </>
+  )
+}
+
+const Language = (props) => {
   return (
     <li>{props.language.name}</li>
   )
@@ -25,7 +44,8 @@ const CountryDetails = (props) => {
       <p>population {props.country.population}</p>
       <b><h2>languages</h2></b>
       <Languages languages={props.country.languages}/>
-      <img src={props.country.flag} height="110" width="180"/>
+      <img src={props.country.flag} height="110" width="180" alt="not found"/>
+      <Weather capital={props.country.capital}/>
     </>
   )
 }
