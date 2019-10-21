@@ -32,7 +32,9 @@ const CountryDetails = (props) => {
 
 const Country = (props) => {
   return (
-    <p>{props.country.name}</p>
+    <>
+      <p>{props.country.name}<button onClick={() => props.handleShow(props.country.name)}>show</button></p>
+    </>
   )
 }
 
@@ -47,7 +49,7 @@ const Countries = (props) => {
     )
   } else {
     return (
-      props.countries.map((country) => <Country key={country.name} country={country}/>)
+      props.countries.map((country) => <Country key={country.name} country={country} handleShow={props.handleShow}/>)
     )
   }
   
@@ -59,6 +61,10 @@ const App = () => {
 
   const handleSearchChange = (event) => {
     setSearch(event.target.value)
+  }
+
+  const handleShow = (name) => {
+    setSearch(name)
   }
 
   useEffect(() => {
@@ -74,7 +80,7 @@ const App = () => {
   return (
     <div>
       find countries:  <input value={search} onChange={handleSearchChange} />
-      <Countries countries={filteredCountries}/>
+      <Countries countries={filteredCountries} handleShow={handleShow}/>
     </div>
   )
 }
