@@ -5,6 +5,8 @@ import './index.css'
 const Notification = (props) => {
   if (props.content === '') {
     return <></>
+  } else if (props.error) {
+    return <div className="error">{props.content}</div>
   } else {
     return <div className="message">{props.content}</div>
   }
@@ -47,6 +49,7 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('')
   const [ search, setSearch ] = useState('')
   const [ notification, setNotification ] = useState('')
+  const [ error, setError ] = useState(false)
 
   const handleNameChange = (event) => {
     setNewName(event.target.value) 
@@ -65,7 +68,15 @@ const App = () => {
       service.remove(selectedPerson)
         .then(() => {
           setPersons(persons.filter(person => person.id !== selectedPerson.id))
-      })
+        })
+        .catch(error => {
+          setError(true)
+          setNotification(`Information of ${selectedPerson.name} has already been removed`)
+          setTimeout(() => {
+            setNotification('') 
+            setError(false)
+          },3000)
+        })
     }
   }
 
@@ -111,7 +122,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification content={notification} />
+      <Notification content={notification} error={error}/>
       <Filter value={search} handleSearchChange={handleSearchChange}/>
       <h2>add a new</h2>
       <form onSubmit={addEntry}>
