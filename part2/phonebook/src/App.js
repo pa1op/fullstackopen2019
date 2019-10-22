@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import service from './service'
+import './index.css'
+
+const Notification = (props) => {
+  if (props.content === '') {
+    return <></>
+  } else {
+    return <div className="message">{props.content}</div>
+  }
+}
 
 const Person = (props) => {
   return <p>{props.person.name} {props.person.number}<button onClick={() => { props.handleDelete(props.person) }} >delete</button></p>
@@ -20,16 +29,16 @@ const Filter = (props) => {
 const PersonForm = (props) => {
   return (
     <>
-    <div>
-      name: <input value={props.newName} onChange={props.handleNameChange} />
-      <br/>
-      number: <input value={props.newNumber} onChange={props.handleNumberChange} />
-    </div>
-    <div>
-      <button type="submit">add</button>
-    </div>
-</>
-)
+      <div>
+        name: <input value={props.newName} onChange={props.handleNameChange} />
+        <br/>
+        number: <input value={props.newNumber} onChange={props.handleNumberChange} />
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </>
+  )
 }
 
 const App = () => {
@@ -37,6 +46,7 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ search, setSearch ] = useState('')
+  const [ notification, setNotification ] = useState('')
 
   const handleNameChange = (event) => {
     setNewName(event.target.value) 
@@ -72,19 +82,18 @@ const App = () => {
   }, [])
 
   const updateEntry = (updatedPerson) => {
-    console.log("update")
-    console.log("update")
     if (window.confirm(`${updatedPerson.name} is already added to the phonebook, replace old number with a new one?`)) {
       let updateEntry = persons.filter(person => person.name === updatedPerson.name)[0]
       updatedPerson.id = updateEntry.id
       service.update(updatedPerson)
-      console.log(updatedPerson)
     }
   }
 
   const createEntry = (person) => {
     setPersons(persons.concat(person))
     service.create(person)
+    setNotification(`Added ${person.name}`)
+    setTimeout(() => setNotification(''), 3000)
   }
 
   const addEntry = (event) => {
@@ -102,6 +111,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification content={notification} />
       <Filter value={search} handleSearchChange={handleSearchChange}/>
       <h2>add a new</h2>
       <form onSubmit={addEntry}>
