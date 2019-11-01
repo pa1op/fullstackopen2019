@@ -101,9 +101,17 @@ const App = () => {
   }
 
   const createEntry = (person) => {
-    setPersons(persons.concat(person))
     service.create(person)
-    setNotification(`Added ${person.name}`)
+      .then((createdPerson) => {
+        setError(false)
+        setNotification(`Added ${person.name}`)
+        persons.concat(createdPerson)
+      })
+      .catch(error => {
+        console.log(error.response.data)
+        setError(true)
+        setNotification(error.response.data.error)
+      })
     setTimeout(() => setNotification(''), 3000)
   }
 
