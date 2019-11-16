@@ -3,9 +3,6 @@ import service from './service'
 import './index.css'
 
 const Notification = (props) => {
-  console.log("At notification")
-  console.log(props.content)
-  console.log(props.error)
   if (props.content === null) {
     return <></>
   } else if (props.error) {
@@ -118,12 +115,12 @@ const App = () => {
         service.getAll().then(persons => {
           setPersons(persons)
         })
-          .catch(error => {
-            setError(true)
-            setNotification(error.response.data.error)
-          })
-        setTimeout(() => setNotification(null), 3000)
       })
+      .catch(error => {
+        setError(true)
+        setNotification(error.response.data.error)
+      })
+    setTimeout(() => setNotification(null), 3000)
   }
 
   const addEntry = (event) => {
