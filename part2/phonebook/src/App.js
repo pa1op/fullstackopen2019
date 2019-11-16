@@ -3,7 +3,10 @@ import service from './service'
 import './index.css'
 
 const Notification = (props) => {
-  if (props.content === '') {
+  console.log("At notification")
+  console.log(props.content)
+  console.log(props.error)
+  if (props.content === null) {
     return <></>
   } else if (props.error) {
     return <div className="error">{props.content}</div>
@@ -48,7 +51,7 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ search, setSearch ] = useState('')
-  const [ notification, setNotification ] = useState('')
+  const [ notification, setNotification ] = useState(null)
   const [ error, setError ] = useState(false)
 
   const handleNameChange = (event) => {
@@ -73,7 +76,7 @@ const App = () => {
           setError(true)
           setNotification(`Information of ${selectedPerson.name} has already been removed`)
           setTimeout(() => {
-            setNotification('') 
+            setNotification(null) 
             setError(false)
           },3000)
         })
@@ -96,7 +99,14 @@ const App = () => {
     if (window.confirm(`${updatedPerson.name} is already added to the phonebook, replace old number with a new one?`)) {
       let updateEntry = persons.filter(person => person.name === updatedPerson.name)[0]
       updatedPerson.id = updateEntry.id
-      service.update(updatedPerson)
+      service.update(updatedPerson).then(response => {
+        service.getAll().then(persons => {
+          setPersons(persons)
+          setError(false)
+          setNotification(`Updated ${updatedPerson.name}`)
+        })
+      })
+      setTimeout(() => setNotification(null), 3000)
     }
   }
 
@@ -105,14 +115,15 @@ const App = () => {
       .then((createdPerson) => {
         setError(false)
         setNotification(`Added ${person.name}`)
-        persons.concat(createdPerson)
+        service.getAll().then(persons => {
+          setPersons(persons)
+        })
+          .catch(error => {
+            setError(true)
+            setNotification(error.response.data.error)
+          })
+        setTimeout(() => setNotification(null), 3000)
       })
-      .catch(error => {
-        console.log(error.response.data)
-        setError(true)
-        setNotification(error.response.data.error)
-      })
-    setTimeout(() => setNotification(''), 3000)
   }
 
   const addEntry = (event) => {
@@ -124,8 +135,10 @@ const App = () => {
     setSearch('')
   }
 
-  const matchingPersons = persons.filter(person => person.name.toUpperCase().includes(search.toUpperCase()))
-  const personsToList = search ? matchingPersons : persons
+  let personsToList = persons
+  if (search) { 
+    personsToList = persons.filter((person) => person.name.toUpperCase().includes(search.toUpperCase()))
+  }
 
   return (
     <div>
